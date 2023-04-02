@@ -34,8 +34,7 @@ const Navbar = () => {
 const Header = () => {
   return (
     <>
-      <h1>Welcome</h1>
-      <p>This app can recommend you a new book to read</p>
+
     </>
   );
 };
@@ -64,73 +63,68 @@ const List = ({ genreValue, bookList }) => {
   );
 };
 function App() {
-  const [bookLists, setBookLists] = useState([]);
-  const [genre, setGenre] = useState("");
-  const [genreBookList, setGenreBookList] = useState([]);
+  const [productList, setProducts] = useState([]);
 
   useEffect(() => {
-    storeService.getList().then((list) => {
-      setBookLists(list);
-      setGenre("default");
+    storeService.getResponse().then((list) => {
+      setProducts(list)
+      console.log(list)
     });
   }, []);
 
-  const handleClick = (event) => {
-    if (genre !== "default") {
-      storeService.getCurrentList(genre).then((list) => {
-        setGenreBookList(list.results.books);
-      });
-    }
-  };
-
-  const handleGenreChange = (event) => {
-    setGenre(event.target.value);
-  };
-
+ 
+ 
   return (
     <div className="container">
       <Navbar />
       <div className="row">
-        <div className="col-4">
-          <Header />
-          <div className="row">
-            <div className="col-12">
-              <div className="img--l"></div>
-            </div>
+        <div className="row">
+          <div className="col-2">
+            <h5>Filters</h5>
+            {productList.map(p=>p.Brand)}
+            <select className="form-control">
+              {productList.map((p) => (
+                <option key={p.ProductID}>
+                  {p.Brand}
+                </option>
+              ))}
+            </select>
           </div>
-          <label htmlFor="listSelect">Choose your genre:</label>
-          <select
-            id="listSelect"
-            className="form-select mb-1"
-            value={genre}
-            onChange={handleGenreChange}
-          >
-            <option value="default">Choose genre</option>
-            {bookLists.map((list) => (
-              <option
-                key={list.list_name_encoded}
-                value={list.list_name_encoded}
-              >
-                {list.display_name}
-              </option>
-            ))}
-          </select>
-          <div className="d-grid gap-2">
-            <button className="btn btn-block btn-dark" onClick={handleClick}>
-              Recommend
-            </button>
+          <div className="col-10">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">id</th>
+                  <th scope="col"></th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Prijs</th>
+                  <th scope="col">Aantal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {productList.map((product, i) => (
+                  <tr key={product.ProductID}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <img className="product-picture" src={product.ProductPictures[0].Url}></img>
+                    </td>
+
+                    <td>{product.MainDescription}</td>
+                    <td>€{
+                      product.ProductPrices[0].Price
+                    }</td>
+                    <td>0 -+</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+
           </div>
-        </div>
-        <div className="col-4">
-        <List genreValue={genre} bookList={genreBookList} />
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-12">
-          <em>Data provided by https://api.nytimes.com</em>
         </div>
       </div>
     </div>
+
   );
 }
 
