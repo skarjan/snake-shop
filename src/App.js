@@ -39,6 +39,40 @@ const Header = () => {
   );
 };
 
+const Products = ({products}) => {
+  return (
+    <>
+                <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">id</th>
+                  <th scope="col"></th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Prijs</th>
+                  <th scope="col">Aantal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product, i) => (
+                  <tr key={product.ProductID}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <img className="product-picture" src={product.ProductPictures[0].Url}></img>
+                    </td>
+
+                    <td>{product.MainDescription}</td>
+                    <td>€{
+                      product.ProductPrices[0].Price
+                    }</td>
+                    <td>- 0 +</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+    </>
+  )
+}
+
 const List = ({ genreValue, bookList }) => {
   if (bookList.length === 0) {
     return null;
@@ -64,11 +98,21 @@ const List = ({ genreValue, bookList }) => {
 };
 function App() {
   const [productList, setProducts] = useState([]);
-
+  const [productBrands, setProductBrands] = useState([])
+  const [filter, setFilter] = useState({
+    useFilter: false,
+    filterType: null,
+    filter: null
+  });
   useEffect(() => {
     storeService.getResponse().then((list) => {
       setProducts(list)
-      console.log(list)
+
+      const productBrands = list.map((p) => p.Brand)
+      const allUniqueBrands = [...new Set(productBrands)]
+      const uniqueBrands = allUniqueBrands.filter((b)=> b !== null)
+      setProductBrands(uniqueBrands)
+      console.log(filter)
     });
   }, []);
 
@@ -81,45 +125,16 @@ function App() {
         <div className="row">
           <div className="col-2">
             <h5>Filters</h5>
-            {productList.map(p=>p.Brand)}
             <select className="form-control">
-              {productList.map((p) => (
-                <option key={p.ProductID}>
-                  {p.Brand}
+              {productBrands.map((p) => (
+                <option key={p}>
+                  {p}
                 </option>
               ))}
             </select>
           </div>
           <div className="col-10">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">id</th>
-                  <th scope="col"></th>
-                  <th scope="col">Product</th>
-                  <th scope="col">Prijs</th>
-                  <th scope="col">Aantal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {productList.map((product, i) => (
-                  <tr key={product.ProductID}>
-                    <td>{i + 1}</td>
-                    <td>
-                      <img className="product-picture" src={product.ProductPictures[0].Url}></img>
-                    </td>
-
-                    <td>{product.MainDescription}</td>
-                    <td>€{
-                      product.ProductPrices[0].Price
-                    }</td>
-                    <td>0 -+</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-
+            <Products products={productList} />
           </div>
         </div>
       </div>
