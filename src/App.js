@@ -39,36 +39,73 @@ const Header = () => {
   );
 };
 
-const Products = ({products}) => {
+const Products = ({ filterSettings, products }) => {
+  if (filterSettings.useFilter) {
+    const filteredProducts = [...(products.filter((product) =>
+      product.Brand === filterSettings.filterValue
+    ))]
+    return (
+      <>
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">id</th>
+              <th scope="col"></th>
+              <th scope="col">Product</th>
+              <th scope="col">Prijs</th>
+              <th scope="col">Aantal</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {filteredProducts.map((product, i) => (
+              <tr key={product.ProductID}>
+                <td>{i + 1}</td>
+                <td>
+                  <img className="product-picture" src={product.ProductPictures[0].Url}></img>
+                </td>
+
+                <td>{product.MainDescription}</td>
+                <td>€{
+                  product.ProductPrices[0].Price
+                }</td>
+                <td>- 0 +</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )
+  }
   return (
     <>
-                <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">id</th>
-                  <th scope="col"></th>
-                  <th scope="col">Product</th>
-                  <th scope="col">Prijs</th>
-                  <th scope="col">Aantal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product, i) => (
-                  <tr key={product.ProductID}>
-                    <td>{i + 1}</td>
-                    <td>
-                      <img className="product-picture" src={product.ProductPictures[0].Url}></img>
-                    </td>
+      <table className="table">
+        <thead>
+          <tr>
+            <th scope="col">id</th>
+            <th scope="col"></th>
+            <th scope="col">Product</th>
+            <th scope="col">Prijs</th>
+            <th scope="col">Aantal</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product, i) => (
+            <tr key={product.ProductID}>
+              <td>{i + 1}</td>
+              <td>
+                <img className="product-picture" src={product.ProductPictures[0].Url}></img>
+              </td>
 
-                    <td>{product.MainDescription}</td>
-                    <td>€{
-                      product.ProductPrices[0].Price
-                    }</td>
-                    <td>- 0 +</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              <td>{product.MainDescription}</td>
+              <td>€{
+                product.ProductPrices[0].Price
+              }</td>
+              <td>- 0 +</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   )
 }
@@ -102,22 +139,41 @@ function App() {
   const [filter, setFilter] = useState({
     useFilter: false,
     filterType: null,
-    filter: null
+    filterValue: null
   });
+
   useEffect(() => {
     storeService.getResponse().then((list) => {
       setProducts(list)
 
       const productBrands = list.map((p) => p.Brand)
       const allUniqueBrands = [...new Set(productBrands)]
-      const uniqueBrands = allUniqueBrands.filter((b)=> b !== null)
+      const uniqueBrands = allUniqueBrands.filter((b) => b !== null)
       setProductBrands(uniqueBrands)
-      console.log(filter)
     });
   }, []);
 
- 
- 
+  const handleFilterChange = (event) => {
+    let filterSettings = {}
+    if (event.target.value !== "all") {
+      filterSettings = {
+        useFilter: true,
+        filterType: "Brand",
+        filterValue: event.target.value
+      }
+    } else {
+      filterSettings = {
+        useFilter: false,
+        filterType: null,
+        filterValue: null
+      }
+    }
+    console.log(filterSettings)
+    setFilter(filterSettings)
+  }
+
+
+
   return (
     <div className="container">
       <Navbar />
@@ -125,7 +181,8 @@ function App() {
         <div className="row">
           <div className="col-2">
             <h5>Filters</h5>
-            <select className="form-control">
+            <select defaultValue={"all"} onChange={handleFilterChange} className="form-control">
+              <option value={"all"}>Alles</option>
               {productBrands.map((p) => (
                 <option key={p}>
                   {p}
@@ -134,7 +191,7 @@ function App() {
             </select>
           </div>
           <div className="col-10">
-            <Products products={productList} />
+            <Products filterSettings={filter} products={productList} />
           </div>
         </div>
       </div>
