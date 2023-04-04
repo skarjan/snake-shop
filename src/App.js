@@ -42,39 +42,39 @@ const Header = () => {
 const Products = ({ filterSettings, products, filtered }) => {
   console.log(filtered)
   if (filterSettings.useFilter) {
-  return (
-    <>
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col"></th>
-            <th scope="col">Product</th>
-            <th scope="col">Prijs</th>
-            <th scope="col">Aantal</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          {filtered.map((product, i) => (
-            <tr key={product.ProductID}>
-              <td>{i + 1}</td>
-              <td>
-                <img className="product-picture" src={product.ProductPictures[0].Url}></img>
-              </td>
-
-              <td>{product.MainDescription}</td>
-              <td>€{
-                product.ProductPrices[0].Price
-              }</td>
-              <td>- 0 +</td>
+    return (
+      <>
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">id</th>
+              <th scope="col"></th>
+              <th scope="col">Product</th>
+              <th scope="col">Prijs</th>
+              <th scope="col">Aantal</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
-)
-            }
+          </thead>
+          <tbody>
+
+            {filtered.map((product, i) => (
+              <tr key={product.ProductID}>
+                <td>{i + 1}</td>
+                <td>
+                  <img className="product-picture" src={product.ProductPictures[0].Url}></img>
+                </td>
+
+                <td>{product.MainDescription}</td>
+                <td>€{
+                  product.ProductPrices[0].Price
+                }</td>
+                <td>- 0 +</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )
+  }
 
   return (
     <>
@@ -118,6 +118,9 @@ function App() {
     filterType: null,
     filterValue: null
   });
+  useEffect(() => {
+    document.title = "Snakeshop"
+  }, [])
 
   useEffect(() => {
     storeService.getResponse().then((list) => {
