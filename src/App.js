@@ -122,6 +122,7 @@ function App() {
   useEffect(() => {
     storeService.getResponse().then((list) => {
       setProducts(list)
+      setFilteredProducts(list)
       const productBrands = list.map((p) => p.Brand)
       const allUniqueBrands = [...new Set(productBrands)]
       const uniqueBrands = allUniqueBrands.filter((b) => b !== null)
@@ -162,6 +163,7 @@ function App() {
         <div className="row">
           <div className="col-2">
             <h5>Filters</h5>
+            <h6>Fabrikant</h6>
             <select id={"Brand"} defaultValue={"all"} onChange={handleBrandChange} className="form-control">
               <option value={"all"}>Alles</option>
               {productBrands.map((p) => (
