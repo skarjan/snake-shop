@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/snake-shop/static/css/main.9ea40f64.css",
+    "main.js": "/snake-shop/static/js/main.948a93f5.js",
+    "index.html": "/snake-shop/index.html",
+    "main.9ea40f64.css.map": "/snake-shop/static/css/main.9ea40f64.css.map",
+    "main.948a93f5.js.map": "/snake-shop/static/js/main.948a93f5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9ea40f64.css",
+    "static/js/main.948a93f5.js"
+  ]
+}
